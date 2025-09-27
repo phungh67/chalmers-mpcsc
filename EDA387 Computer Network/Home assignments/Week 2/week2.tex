@@ -162,11 +162,11 @@ Let begin with the process to form the maximum numbers of pairs.
 
 \begin{lstlisting}
 01: $P_0$: do forever
-02:         if not $matched$ $AND$ then:
+02:         if not $matched$ then:
 03:           $token$
 04:           if $P_{(i-1) \bmod n}$ is not $matched$ then:
 05:              matched: = true
-06:              pass $token$ to $P_{(i+1) \bmod n}$
+06:         pass $token$ to $P_{(i+1) \bmod n}$
 07: $P_i$: do forever
 08:         if $token$ then:
 09:             if $P_{(i-1) \bmod n}$ is not $matched$ and $P_i$ is not $matched$ then:
