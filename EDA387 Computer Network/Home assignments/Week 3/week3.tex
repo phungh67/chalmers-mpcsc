@@ -1,0 +1,172 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{latexsym,amsfonts,amssymb,amsthm,amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor} 
+
+\graphicspath{ {./images/} }
+
+\setlength{\parindent}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{8.8in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{18pt}
+
+\lstset{
+  mathescape,
+  backgroundcolor=\color{gray!10},  
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  breakatwhitespace=false,      
+  breaklines=true,                
+  captionpos=b,                    
+  commentstyle=\color{green}, 
+  extendedchars=true,              
+  frame=single,                   
+  keepspaces=true,             
+  keywordstyle=\color{blue},      
+  language=c++,                 
+  numbers=none,                
+  numbersep=5pt,                   
+  numberstyle=\tiny\color{blue}, 
+  rulecolor=\color{gray},        
+  showspaces=false,               
+  showstringspaces=false,
+  showtabs=false,                 
+  stepnumber=5,                  
+  stringstyle=\color{red},   
+  tabsize=3,                      
+  title=\lstname                
+}
+
+
+
+\title{Home assignment for Computer Network EDA387}
+\author{Group 24}
+
+\begin{document}
+
+\maketitle
+
+\vspace{0.5in}
+
+\paragraph{Problem}
+
+Consider an asynchronous computer network with a distributed but fair scheduler, i.e.,
+not a central daemon. The network has $n$ nodes, where $n < N$ is a finite number
+that is unknown to the algorithm, and $N$ is an upper bound on $n$, such that only the value
+of $\lceil \log_2 N \rceil$ is known. The network is based on shared memory where each processor
+can write to a single register with up to $O(\lceil \log_2 N \rceil)$ bits. 
+Recall that each register can be divided into multiple fields, say, one field per neighbor. 
+The processors do not have globally unique identifiers, and all nodes run the same program 
+without the presence of a distinguished processor.
+
+Your task is to design a self-stabilizing algorithm that operates within an asynchronous
+network with a graph topology, which we specify below. 
+The algorithm is required to achieve an accurate node count. After a period of recovery 
+from the occurrence of the last transient fault, each processor should output, using the 
+operation \texttt{print(x)}, the total number $x$ of nodes in the system.
+
+Please present a comprehensive explanation of your solution along with your exact assumptions.
+
+\begin{enumerate}
+    \item Provide a well-structured pseudo-code for your algorithm.
+    \item Define the set of legal executions.
+    \item Present a proof of correctness, complete with all necessary arguments to convincingly 
+          demonstrate the algorithm’s accuracy and self-stabilization. If needed, separate 
+          between the convergence and the closure proofs.
+    \item What is the stabilization time of the proposed algorithm?
+    \item Does a self-stabilizing naming algorithm exist for the system described? 
+          If such an algorithm exists, provide a detailed description and proof of its correctness. 
+          If not, provide proof of the impossibility of the result.
+\end{enumerate}
+
+\subsection*{Question 1}
+
+% Question 1 statement should be placed in there, modify the {} subsection to match.
+% \includegraphics[scale=set_to_fit_with_space]{relative_or_absolute_path_is_fine}
+
+Suppose the network topology is an oriented bidirectional path graph $P_n$. 
+Specifically, each register is divided into two fields. That is, processor $p_i$ can read
+its neighbors’ registers, $\text{left}_j$ or $\text{right}_k$, while writing/reading only 
+to its own $\text{left}_i$ and $\text{right}_i$ fields in its register, where $p_j$ and $p_k$ 
+are $p_i$’s neighbors. 
+
+The path is oriented from left to right in the sense that each node has a right and/or 
+left neighbor. That is, starting from the leftmost node (which has no left neighbor, 
+i.e., $\text{left}_i = \bot$) and taking exactly $n$ hops to the right brings us 
+to the rightmost node (which has no right neighbor, i.e., $\text{right}_i = \bot$).
+
+
+\bigskip
+
+\begin{proof}
+
+Because of each processor has its own register, and in the register, it can be divided into fields,
+we will use this to store the important information as in the pseudo-code below.
+
+\begin{lstlisting}
+    00 do forever
+    01  if not hasLeft:
+    02      $\text{left}_i$ := 0
+    03  else
+    04      $\text{left}_i$ := min($\text{left}_j$ + 1, N)
+    05  if not hasRight:
+    06      $\text{right}_i$ := $\text{left}_i$ + 1
+    07  else
+    08      $\text{right}_i$ := $\text{right}_k$
+\end{lstlisting}
+
+Let consider the left field in the register is for the relative distance from the processor to the leftmost,
+while the right field is for the number of the processors. In this problem, this code uses 2 floods to update the correct value for a processors. One from the leftmost, 
+carries the relative distance from leftmost processor to $P_i$. The other comes from rightmost, carries the 
+information about the total number of processors in this set.
+
+\begin{itemize}
+    \item \textbf{Legal execution and legal configuration} each processor can update its $left$ or $right$ register through computing with
+    the help of the neighbors, left and right. With leftmost's $left$ and rightmost's $right$, these values are
+    assigned. The legal configuration is that: each processor holds both the distance to the leftmost and the total number
+    of processors. Under a fair scheduler, every processors will have chance to update these values.
+
+    \item \textbf{Correctness} this algorithm will flood the value from the leftmost to the rightmost. Because
+    it takes exactly $n$ steps from leftmost to rightmost, at the end of block $01 - 04$ (the left flood), each 
+    processor will know its relative distance to the leftmost, and this will remain unchanged (because the value is 
+    the same after the stabilization). As the same with block $05-08$, the rightmost will assign the value of $n$
+    and will flood it to the leftmost. Because these 2 processes begin from different directions and write to different
+    fields, it is guarantee that the values are correct.
+
+    \item \textbf{Lemma for left convergence} if a processor $P_i$ has a value $left_i$ after several asynchronuous rounds.
+    Because the leftmost always set its $left$ to 0, it will be stabilized after at most $n$ rounds. Hence, the complexity of 
+    this algorithm is $O(n)$ for the left convergence.
+    
+    \item \textbf{Lemma for right convergence} because the rightmost keeps setting its $right$ to the value of its $left$,
+    if a register $right_i$ has transient fault, it will eventually adopt the value $n$ after at most $n$ rounds. Same as
+    left convergence, complexity is $O(n)$.
+
+    \item \textbf{Time} at most $n$ cycles, all these processors will be in the safe configuration state.
+\end{itemize}
+
+For the question: \textit{Can a naming self-stabilization algorithm exist on such a system}
+
+The answer is no without a distinguished node. As stated in "Self stabilization" (Angluin 1980, Dolev): "Naming in anonymous,
+symmetric networks without unique inputs is impossible.
+
+And from this system (as in question 1):
+\begin{itemize}
+    \item The network is anonymous, symmetric and deterministic.
+    \item All nodes run identical codewith no distinguishing information. (At fault, we even don't know the total nodes).
+    \item The leftmost, and even the rightmost cannot be considered as a standout. Because they need data from each other 
+    to form the legal configuration. 
+\end{itemize}
+
+But with an symmety breaking algorithm (leader elective algorithm), 
+
+\end{proof}
+
+\vspace{3in}
+
+\end{document}
+% vim: set ts=4 sw=4 et:                
