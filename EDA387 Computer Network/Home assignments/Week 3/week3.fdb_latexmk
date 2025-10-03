@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1759431132.90506 "d:/Chalmers's Msc/chalmers-mpcsc/EDA387 Computer Network/Home assignments/Week 3/week3.tex" "week3.pdf" "week3" 1759431134.08574 0
+["pdflatex"] 1759502900.63595 "d:/Chalmers's Msc/chalmers-mpcsc/EDA387 Computer Network/Home assignments/Week 3/week3.tex" "week3.pdf" "week3" 1759502901.79802 0
   "c:/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1758322016 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "c:/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1758322945 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm" 1758322536 1536 74b7293ec3713bb7fdca8dd1bd1f469c ""
@@ -75,9 +75,9 @@
   "c:/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1758326907 5574153 af86687748baf417d9e7d549313527be ""
   "c:/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1758327213 3621632 8bdbfc2eaef0a21dc8cd11e867a7ddcb ""
   "c:/texlive/2025/texmf.cnf" 1758326879 713 e69b156964470283e0530f5060668171 ""
-  "d:/Chalmers's Msc/chalmers-mpcsc/EDA387 Computer Network/Home assignments/Week 3/week3.tex" 1759431131 7963 103e00854d733d985f2e003cfc1cf6c6 ""
-  "week3.aux" 1759431133 114 8837316f5782572cea8df21f05f8829f "pdflatex"
-  "week3.tex" 1759431131 7963 103e00854d733d985f2e003cfc1cf6c6 ""
+  "d:/Chalmers's Msc/chalmers-mpcsc/EDA387 Computer Network/Home assignments/Week 3/week3.tex" 1759502900 8306 dc6e3dad89cf88706b2ec0bde579e7e4 ""
+  "week3.aux" 1759502901 114 8837316f5782572cea8df21f05f8829f "pdflatex"
+  "week3.tex" 1759502900 8306 dc6e3dad89cf88706b2ec0bde579e7e4 ""
   (generated)
   "week3.aux"
   "week3.log"

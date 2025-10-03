@@ -126,10 +126,10 @@ carries the relative distance from leftmost processor to $P_i$. The other comes 
 information about the total number of processors in this set.
 
 \begin{itemize}
-    \item \textbf{Legal execution and legal configuration} each processor can update its $left$ or $right$ register through computing with
-    the help of the neighbors, left and right. With leftmost's $left$ and rightmost's $right$, these values are
-    assigned. The legal configuration is that: each processor holds both the distance to the leftmost and the total number
-    of processors. Under a fair scheduler, every processors will have chance to update these values.
+    \item \textbf{Legal execution and legal configuration} The legal configuration for this system is, in the
+    register $s_i$, the left field is for relative distance to the leftmost and the right field is for the total
+    number of processors in this system. Within the $do forever$, these processors will keep the same values for
+    these 2 fields, hence, guaranted the stabilization. From this state, only legal executions can be started.
 
     \item \textbf{Correctness} this algorithm will flood the value from the leftmost to the rightmost. Because
     it takes exactly $n$ steps from leftmost to rightmost, at the end of block $01 - 04$ (the left flood), each 
@@ -152,17 +152,20 @@ information about the total number of processors in this set.
 For the question: \textit{Can a naming self-stabilization algorithm exist on such a system}
 
 The answer is no without a distinguished node. As stated in "Self stabilization" (Angluin 1980, Dolev): "Naming in anonymous,
-symmetric networks without unique inputs is impossible.
+symmetric networks without unique inputs is impossible. Because in this system, processor can not know the total number of 
+nodes in this system, therefore, the total number of unique labels for naming is unknown.
 
-And from this system (as in question 1):
+For a system that is similar to question 1, we can see that:
 \begin{itemize}
-    \item The network is anonymous, symmetric and deterministic.
-    \item All nodes run identical codewith no distinguishing information. (At fault, we even don't know the total nodes).
-    \item The leftmost, and even the rightmost cannot be considered as a standout. Because they need data from each other 
-    to form the legal configuration. 
+    \item Every processors run the same deterministic program.
+    \item Processors are initially in arbitrary state (require self-stabilizing).
+    \item The topology is symmetric, all processors have identical view (only knows left of right neighbor).
 \end{itemize}
 
-But with an symmety breaking algorithm (leader elective algorithm), 
+But, we still can find an algorithm under some conditions. We can first use the self-stabilizing algorithm for
+all processors, once the system is in legal configuration, a leader elective algorithm can be run to determine 
+the distinguished processor. With these conditions, the symmetry can be broken and a self-stabilizing naming algorithm
+can exist.
 
 \end{proof}
 
