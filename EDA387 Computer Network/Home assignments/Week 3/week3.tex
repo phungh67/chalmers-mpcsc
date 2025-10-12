@@ -84,11 +84,7 @@ Please present a comprehensive explanation of your solution along with your exac
           If not, provide proof of the impossibility of the result.
 \end{enumerate}
 
-\subsection*{Question 1}
-
-% Question 1 statement should be placed in there, modify the {} subsection to match.
-% \includegraphics[scale=set_to_fit_with_space]{relative_or_absolute_path_is_fine}
-
+\subsection*{Question 1.}
 Suppose the network topology is an oriented bidirectional path graph $P_n$. 
 Specifically, each register is divided into two fields. That is, processor $p_i$ can read
 its neighbors’ registers, $\text{left}_j$ or $\text{right}_k$, while writing/reading only 
@@ -151,23 +147,86 @@ information about the total number of processors in this set.
 
 For the question: \textit{Can a naming self-stabilization algorithm exist on such a system}
 
-The answer is no without a distinguished node. As stated in "Self stabilization" (Angluin 1980, Dolev): "Naming in anonymous,
-symmetric networks without unique inputs is impossible. Because in this system, processor can not know the total number of 
-nodes in this system, therefore, the total number of unique labels for naming is unknown.
+The answer is yes, with these above configuration and assumptions, a naming self-stabilization can exist.
+As in the line 01 and 02 stated that, the leftmost node, which does not have any right neighbor (also stated
+in the initial configuration), will adopt the value $left=0$. This will make it in to a distinguished node. The
+leftmost adopts this attribute as its ID, hence floods for all other nodes to get an ID as well. Moreover, 
+in the pseudo code, the leftmost acts as an anchor for the flooding. After the convergence, each nodes will
+have a unique value in left field of its register, which can be treated as a unique property.
 
-For a system that is similar to question 1, we can see that:
-\begin{itemize}
-    \item Every processors run the same deterministic program.
-    \item Processors are initially in arbitrary state (require self-stabilizing).
-    \item The topology is symmetric, all processors have identical view (only knows left of right neighbor).
-\end{itemize}
-
-But, we still can find an algorithm under some conditions. We can first use the self-stabilizing algorithm for
-all processors, once the system is in legal configuration, a leader elective algorithm can be run to determine 
-the distinguished processor. With these conditions, the symmetry can be broken and a self-stabilizing naming algorithm
-can exist.
+Also, this system's symmestric was broken by the topology. Nodes are not identical, because we have leftmost and
+rightmost are not the same with other nodes (have neighbors from both side).
 
 \end{proof}
+
+\vspace{3in}
+
+\subsection*{Question 2.} 
+Consider the following definition of a tree graph, which we later extend:
+
+\begin{itemize}
+    \item \textbf{Connectedness:} There is a path between any pair of vertices in the tree.
+    \item \textbf{Acyclicity:} The tree contains no cycles.
+    \item \textbf{Finite vertices:} The tree has a finite number of vertices and edges.
+    \item \textbf{Edges:} Suppose there are $n$ vertices in the tree. The number of edges is $n - 1$.
+\end{itemize}
+
+This question assumes that the network topology is a \textit{non-rooted tree}, 
+which is a tree network with only local identifiers. 
+This is unlike rooted tree networks, where one of the nodes is distinguished.
+
+\bigskip
+
+\begin{proof}
+
+Consider this pseudo code block:
+
+Connect the graph when leader is elected
+\begin{lstlisting}
+$P_i$
+00 do forever:
+01     for each $P_j$ in $N(P_i)$:
+02         sum_from_other_neighbors = 0
+03         for each $P_k$ in $N(P_i)$ that $k \neq j$:
+04                 sum_from_other_neighbors += $P_k$.size_for[$P_i$]
+05         $P_i$.size_for[$P_j$] = 1 + sum_from_other_neighbors
+06     total = 1 
+07     for each $P_j$ in $N(P_i)$:
+08         total += $P_j$.size_for[$P_i$]
+\end{lstlisting}
+
+The above pseudo code is the solution for couting problem in a tree. The main idea is 
+each node read from its neighbors the information about the total nodes rooted at that
+children. For example, the node A has B, C and D as children, it will read the value about
+the total node from subtree rooted in B, C and D, and counted 1 for itself, it will know
+the value of total node in this system.
+
+\begin{itemize}
+    \item \textbf{Legal configuration and legal execution set} the safe configuration for this 
+    system is every leaves keep writing the $total = 1$ and all the nodes write the same information
+    in the $P_i$.size\_for[$P_j$] (keeps broadcasting the same value for all its neighbors).
+
+    \item \textbf {Correctness} in this tree, because it has the same setting with question 1 that
+    leftmost node (now we call it leaf) that does not have any neighbor except itself. This ensure that
+    after the $do forever$ loop, it will only has $sum\_from\_other\_neighbors = 1$. Regardless a garbage value occurs, this
+    nodes always propagate 1 to its neighbors. When this value is passed to $P_j$, neighbor of
+    the leaf, it will further broadcast this value to all other nodes, creates a way of correction.
+    Because this tree contains no loop and there is always a way from every two nodes, the propagation will
+    reach every nodes. When all the garbage values are eliminated, each node $P_i$ will calculate the total
+    by the value from every neighbors, hence knows the total nodes of this system.
+
+    \item \text{Self-stabilizing} if the system enters an arbitrary state, the leaf node (node that has only 1
+    neighbor) will always adopt the value $sum\_from\_other\_neighbors = 1$, this ensures that all the leaves propagate correct value, 
+    thus begins the correction way to other nodes.
+\end{itemize}
+\end{proof}
+
+For the question: \textit{Can a naming self-stabilization algorithm exist on such a system}
+
+Unlike question 1, every leaf nodes in this tree are the same. They are identical and run the 
+same code (try to write 1). The easiest imagination is the star-model. With one central node and
+several leaves, these nodes are exactly the same and only have one neighbor. To have a naming algorithm
+the symmestry must be break.
 
 \vspace{3in}
 

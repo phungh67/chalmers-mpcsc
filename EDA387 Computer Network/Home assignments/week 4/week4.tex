@@ -1,0 +1,200 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{latexsym,amsfonts,amssymb,amsthm,amsmath}
+\usepackage{indentfirst} % To indent the first paragraph of a section
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage[hidelinks]{hyperref} % For better cross-referencing
+
+\geometry{a4paper, margin=1in}
+
+\graphicspath{ {./images/} }
+
+% \setlength{\parindent}{0in} % Disabling this to allow for standard indentation
+\setlength{\oddsidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{8.8in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{18pt}
+
+% Settings for code listings
+\lstset{
+  mathescape,
+  backgroundcolor=\color{gray!10},
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  commentstyle=\color{green},
+  extendedchars=true,
+  frame=single,
+  keepspaces=true,
+  keywordstyle=\color{blue},
+  language=c++,
+  numbers=none,
+  numbersep=5pt,
+  numberstyle=\tiny\color{blue},
+  rulecolor=\color{gray},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  stepnumber=5,
+  stringstyle=\color{red},
+  tabsize=3,
+  title=\lstname
+}
+
+\title{Home assignment for Computer Network EDA387}
+\author{Group 24}
+
+\begin{document}
+
+\maketitle
+
+\vspace{0.5in}
+
+\begin{algorithm}[H]
+\caption{Reliable Flooding for disseminating Link State Packets (LSPs) across a network.}
+\label{alg:flooding}
+\begin{algorithmic}[1]
+    \State Each node stores the latest Link State Packet (LSP) from every other node.
+    \State LSPs are forwarded to all nodes except the sender, preventing unnecessary retransmissions.
+    \State Periodic generation of new LSPs occurs, with an incremented Sequence Number (SEQNO). After a reboot, SEQNO starts at 0.
+    \State Upon hearing an LSP with SEQNO = $x$, a node sets its next SEQNO to $x+1$.
+    \State Stored LSPs' Time-to-Live (TTL) decreases; LSPs expire when TTL reaches 0.
+\end{algorithmic}
+\end{algorithm}
+
+\section*{4 The Link State Algorithm and Self-stabilization}
+
+The Link State algorithm involves sending information not only to neighbors but to all network nodes.
+This question asks whether the link state algorithm is self-stabilizing or can become one.
+Algorithm~\ref{alg:flooding} sketches the protocol for reliable flooding, as we learned in class.
+We clarify that the Link State algorithm also uses a local calculation.
+That is, the flooding method described in Algorithm~\ref{alg:flooding} supplies the link state
+algorithm with a set of LSPs for each SEQNO. Using Dijkstra's shortest path algorithm, this link state
+algorithm enables each node to calculate the shortest path within a given graph locally.
+
+\subsection*{Question 1.}
+\begin{itemize}
+    \item What is the model used by the Link-State algorithm? Please choose the most appropriate, correct, complete, and accurate answer.
+    If you think there is more than one correct answer, select the ones that can help you simplify your answer to the rest of this question.
+    Clearly justify your selection.
+    
+    \begin{enumerate}
+        \item Asynchronous shared memory network with the topology of the fully connected graph with fair communication.
+        
+        \item Synchronous message-passing network with the topology of general graph and reliable communication channels.
+        
+        \item Synchronous message-passing network with the topology of the general graph with fair execution.
+        
+        \item Asynchronous message-passing network with the topology of the general graph with fair communication.
+        
+        \item Synchronous shared memory network with topology of fully connected graph and fair communications.
+    \end{enumerate}
+
+    \item Please provide a detailed pseudo code for reliable flooding, which is used by the Link State Algorithm.
+    Your pseudo-code should consider the model you selected above.
+
+    \item Discuss the self-stabilization properties of the algorithm you have provided above.
+    A simple 'yes' or 'no' response is insufficient for credit; your answer should demonstrate
+    a comprehensive understanding of the topic. For example, you may analyze how the algorithm
+    behaves when initiated from an arbitrary starting state (related to the link-state algorithm),
+    highlighting potential disruptions in network operation without the ability to self-recover.
+    Conversely, if you believe the algorithmis self-stabilizing, you can outline a correctness
+    proof while emphasizing its key assumptions.
+\end{itemize}
+
+
+\bigskip
+
+\begin{proof}
+
+For the model choosing, the most appropriate model to chose is the model 4, \textit{Asynchronous message-passing
+network with the topology of the general graph with fair communication.}, for the justifying:
+
+\begin{itemize}
+    \item \textbf{Asynchronous} because in the Internet, all the nodes (or routers) act at their own pace, there is
+    no a central clock for all these nodes. The time for a message from a node to another one is unpredictable, so we
+    cannot use the synchronous one, because it contains restriction that is not correct in comparison with actual
+    network model.
+    \item \textbf{Messenger-passing} as stated before, because every nodes have their own clock, hence, own memory, it
+    is impossible to have a shared memory between these nodes. Moreover, in a large network, nodes are added and removed
+    quite frequently, a model that has a central memory will require more operation overhead to maintain, manage as well as
+    to response to the network changes. All nodes in real topology communicate by sending and recieving messages over physical
+    link.
+    \item \textbf{General graph} in the real model, the network topology is not always clear, therefore, an algorithm and periodically
+    flooding from neighbor nodes are require to discover the paths between these nodes.
+    \item \textbf{Fair communication} is a realistic assumption. It states that if a message is sent infinitely, it will be received infinitely.
+    On the other hand, even there are loss in communication channels, the Link State Protocol and algorithm are able to handle this loss, hence
+    retransmit these packets.
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{Pseudocode for Reliable Flooding of LSPs}
+\label{alg:reliable_flooding}
+\begin{algorithmic}[1]
+    \State \textbf{Initialization for node $P_i$:}
+    \State $SEQNO_i \gets 0$
+    \State $N(i) \gets \text{set of neighbors}$
+    \State $LSP[] \gets \emptyset$
+    
+    \Procedure{PeriodicUpdate}{}
+        \Loop
+            \State $SEQNO_i \gets SEQNO_i + 1$
+            \State $LSP_i \gets \textit{generateLSP}(i, SEQNO_i, \textit{$TTL_i$})$
+            \State $LSP[i] \gets LSP_i$
+            \ForAll{neighbor $P_j \in N(i)$}
+                \State send $\langle i, LSP[i] \rangle$ to $P_j$
+            \EndFor
+        \EndLoop
+    \EndProcedure
+    
+    \Procedure{OnReceive}{$\langle j, LSP_j \rangle$ from neighbor $P_j$}
+        \If{$LSP_j \notin LSP[]$ \textbf{or} $SEQNO_j > LSP[j].SEQNO$}
+            \State $LSP[j] \gets LSP_j$
+            \State $SEQNO_i \gets SEQNO_j + 1$
+            \ForAll{neighbor $P_k \in N(i)$ such that $k \neq s$}
+                \State send $\langle j, LSP_j \rangle$ to $P_k$
+            \EndFor
+        \EndIf
+    \EndProcedure
+
+    \Procedure{DecrementTTL}{}
+        \Loop
+            \ForAll{$\langle j, LSP_j \rangle$ in $LSP[]$}
+                \State $\textit{LSP}_j.\textit{TTL} \gets \textit{LSP}_j.\textit{TTL} - 1$
+                \If{$\textit{LSP}_j.\textit{TTL} \le 0$}
+                    \State remove $\langle j, LSP_j \rangle$ from $LSP[]$
+                \EndIf
+            \EndFor
+        \EndLoop
+    \EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection*{Discussion on Self-Stabilization}
+
+Let's consider that the system starts with an arbitrary status, where nodes can send wrong Link-State package, or the packet is loss during transmission. In this algorithm, $SEQNO$ and $TTL$ can be used to ensure the fault does not stay in the system forever.
+
+In the pseudo code, when a node/processor $P_i$ receives a LSP (line 16-19), considered that the packet contained fault information. But due to the flooding nature of this algorithm, $P_i$ will receive a new packet from its neighbors, after a comparison, it keeps the packet with higher $SEQNO$ (and plus 1, remarks that is an asynchronous round).
+
+From the start, or restart event, every nodes have $SEQNO = 0$, means that they will accept any LSP packet with higher number. This ensure when a new node joins this network or a node that just recovered from fault can keep up with latest network topology.
+
+Moreover, due to \textit{fair communication}, the new, correct LSP will be eventually passed to all other nodes. And because LSP is periodically generated with a higher $SEQNO$ (line 6-9), the correct (and newer) LSP is always accepted.
+
+Finally, the $TTL$ can ensure that even without new LSP, or the arbitrary status lasts longer than expected, node will drop expired LSP information. Every time it receives new LSP or completing a round, it can decrease the $TTL$ of stored LSP information, hence remove the stale one when TTL drops to 0.
+
+The safe configuration of this system is when all the nodes have the latest LSP information.
+
+\end{proof}
+
+\end{document}
+% vim: set ts=4 sw=4 et:
