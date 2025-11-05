@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1760221239.1574 "d:/Chalmers's Msc/chalmers-mpcsc/EDA387 Computer Network/Home assignments/week 4/week4.tex" "week4.pdf" "week4" 1760221240.6722 0
+["pdflatex"] 1760397810.68282 "d:/Chalmers's Msc/chalmers-mpcsc/EDA387 Computer Network/Home assignments/week 4/week4.tex" "week4.pdf" "week4" 1760397812.1367 0
   "c:/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1758322016 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "c:/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1758322945 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm" 1758322536 1536 74b7293ec3713bb7fdca8dd1bd1f469c ""
@@ -73,6 +73,7 @@
   "c:/texlive/2025/texmf-dist/tex/latex/base/ifthen.sty" 1758323727 5525 1593ca62a2554dd7423fc8a4e5a82125 ""
   "c:/texlive/2025/texmf-dist/tex/latex/base/inputenc.sty" 1758323727 5048 0270515b828149155424600fd2d58ac5 ""
   "c:/texlive/2025/texmf-dist/tex/latex/base/latexsym.sty" 1758323727 2853 45a98f589f86476fadff19a8edda5ea9 ""
+  "c:/texlive/2025/texmf-dist/tex/latex/base/omscmr.fd" 1758323727 2469 c75f72b1dc17277decdd842fa4a321a8 ""
   "c:/texlive/2025/texmf-dist/tex/latex/base/size12.clo" 1758323727 8449 8dc66c6c313c8eb2d774af83bca435dd ""
   "c:/texlive/2025/texmf-dist/tex/latex/base/ulasy.fd" 1758323727 2233 b5d3114ec3e0616e658a8e7b74e810f1 ""
   "c:/texlive/2025/texmf-dist/tex/latex/enumitem/enumitem.sty" 1758322624 52272 63d293bc0d496619edb57585740861a2 ""
@@ -112,10 +113,10 @@
   "c:/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1758326907 5574153 af86687748baf417d9e7d549313527be ""
   "c:/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1758327213 3621632 8bdbfc2eaef0a21dc8cd11e867a7ddcb ""
   "c:/texlive/2025/texmf.cnf" 1758326879 713 e69b156964470283e0530f5060668171 ""
-  "d:/Chalmers's Msc/chalmers-mpcsc/EDA387 Computer Network/Home assignments/week 4/week4.tex" 1760221238 9635 71d1adcf3456613eccb60fac3257100c ""
-  "week4.aux" 1760221240 632 6f02b37a5bab5bf67e8a30deb139c7cd "pdflatex"
-  "week4.out" 1760221240 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "week4.tex" 1760221238 9635 71d1adcf3456613eccb60fac3257100c ""
+  "d:/Chalmers's Msc/chalmers-mpcsc/EDA387 Computer Network/Home assignments/week 4/week4.tex" 1760397809 14818 78274075d9513dc6ab48a0da8a4386da ""
+  "week4.aux" 1760397811 852 187a6b6258b0207af31d368bb40a198b "pdflatex"
+  "week4.out" 1760397811 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "week4.tex" 1760397809 14818 78274075d9513dc6ab48a0da8a4386da ""
   (generated)
   "week4.aux"
   "week4.log"

@@ -1,0 +1,90 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{latexsym,amsfonts,amssymb,amsthm,amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor} 
+
+\graphicspath{ {./images/} }
+
+\setlength{\parindent}{0in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{8.8in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{18pt}
+
+\lstset{
+  mathescape,
+  backgroundcolor=\color{gray!10},  
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  breakatwhitespace=false,      
+  breaklines=true,                
+  captionpos=b,                    
+  commentstyle=\color{green}, 
+  extendedchars=true,              
+  frame=single,                   
+  keepspaces=true,             
+  keywordstyle=\color{blue},      
+  language=c++,                 
+  numbers=none,                
+  numbersep=5pt,                   
+  numberstyle=\tiny\color{blue}, 
+  rulecolor=\color{gray},        
+  showspaces=false,               
+  showstringspaces=false,
+  showtabs=false,                 
+  stepnumber=5,                  
+  stringstyle=\color{red},   
+  tabsize=3,                      
+  title=\lstname                
+}
+
+
+
+\title{Peer review on assignment 3}
+\author{Group 24}
+
+\begin{document}
+
+\maketitle
+
+\vspace{0.5in}
+
+\paragraph{Review}
+
+\subsection{Question 1}
+
+\textbf{Overview}
+
+Your solution is correct.
+
+\begin{itemize}
+    \item \textbf{Our opinion} this is a great solution, it not only achieved the correct solution but also has a 
+    very well-structued pseudo code. 
+    \item \textbf{Structure} you have done a great work. highlighting all the important points with title. Additionally,
+    the way you used "closure", "stabilization time" made it very close to a "scientific" publication.
+    \item \textbf{Major point} your pseudo code is quite long and it resembles an actuall programming language, sometime
+    can confused the others. 
+\end{itemize}
+
+\subsection{Question 2}
+
+\textbf{Overview}
+
+Your solution is very similar to our solution (and also the solution that Elad showed to the class). Every leaves of this tree
+set the size to 1, then they send this information to the parent, to their parent parent,... This creates a layer of correction
+that will overwrite the garbage values (if any).
+
+\begin{itemize}
+    \item \textbf{Your solution} the solution is easy to understand, but the pseudo code is not. We have to read the closure and
+    convergence first to understand what you intended to say.
+    \item \textbf{Structure} well-structured, as we stated ealier in the question 1.
+    \item \textbf{Improvement} if you can give some drawings or illustrations to this assignment, we think it will be better because
+    this problem and the algorithm to solve it are hard to imagine.
+\end{itemize}
+
+\end{document}
+% vim: set ts=4 sw=4 et:                

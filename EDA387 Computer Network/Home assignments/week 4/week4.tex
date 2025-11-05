@@ -196,5 +196,96 @@ The safe configuration of this system is when all the nodes have the latest LSP 
 
 \end{proof}
 
+\section*{Question 2.}
+
+Please offer a self-stabilizing solution to the problem addressed by the Link State algorithm within the context of an asynchronous shared memory network, with a general graph topology and fair execution.
+\begin{itemize}
+    \item Your solution should encompass its own pseudocode, which may leverage concepts and algorithms learned in class. In that case, please cite them clearly using the exact book chapter and section numbers.
+    \item Additionally, provide a self-contained correctness proof, referencing relevant theorems and lemmas explicitly if utilized.
+\end{itemize}
+
+
+\begin{algorithm}[H]
+\caption{Token-Based Link-State Packet Dissemination}
+\label{alg:token_lsp}
+\begin{algorithmic}[1]
+    \State \textbf{Structure} to store Link State Packet:
+    \Statex \hspace{\algorithmicindent} \textbf{node} \{
+    \Statex \hspace{\algorithmicindent} \hspace{\algorithmicindent} \textit{seqno}; \Comment{Sequence number}
+    \Statex \hspace{\algorithmicindent} \hspace{\algorithmicindent} \textit{lsp}; \Comment{Link state packet}
+    \Statex \hspace{\algorithmicindent} \hspace{\algorithmicindent} \textit{token}; \Comment{Token presence indicator}
+    \Statex \hspace{\algorithmicindent} \}
+    
+    \Procedure{OnReceiveToken}{}
+        \State $seqno \gets 0$; \Comment{Node's sequence number is set to zero}
+        \State $lsp \gets \Call{GenerateLSP}{}$;
+        \State $token \gets \text{true}$;
+        \State send $token$ to next\_node;
+    \EndProcedure
+    \Statex
+    
+    \Procedure{OnTimerExpired}{}
+        \State $lsp \gets \Call{GenerateLSP}{}$;
+        \State $seqno \gets seqno + 1$;
+        \ForAll{each neighbor}
+            \State send $\langle lsp, seqno \rangle$ to neighbor;
+        \EndFor
+    \EndProcedure
+    \Statex
+    
+    \Procedure{OnReceiveLSP}{$\langle lsp, seqno \rangle$ from neighbor}
+        \If{$seqno > \text{stored\_seqno}$}
+            \State $\text{stored\_seqno} \gets seqno$;
+            \State $\text{stored\_lsp} \gets lsp$;
+            \State \Call{UpdateRoutingTable}{};
+        \EndIf
+    \EndProcedure
+    
+\end{algorithmic}
+\end{algorithm}
+
+\begin{proof}
+    Because these nodes (processors) use a shared memory, we have a $token$ to ensure that only
+    a node can enter the \textit{critical selection} at a time. The main idea is that, a node can
+    upon receiving a token, the node can generate $LSP$ packet, sends to neighbors and also passes 
+    the token.
+
+    \begin{itemize}
+        \item \textbf{Safe configuration and legal execution} for this model, when all nodes keep
+        the most recently data (the LSP packet that still has TTL and with the highest SEQNO), or
+        with two neighbor nodes $P_i$ and $P_j$, the LSP from each of these node should have the
+        same SEQNO. From this state, only $expired$ and $receiveToken$ can happen.
+        \item \textbf{Proof of correctness} when receiving the token, a node set its SEQNO to 0 and 
+        passed the token to neighbors, allow other nodes to generate LSP. In addition, if the system
+        started on arbitrary state, the fault LSP packet will be erased because of the procedure $OnTimerExpired$,
+        each node will generate new LSP and increase the SEQNO to 1. On the receiver side, when it
+        has a LSP packet from its neighbor, if the SEQNO of that packet is larger that the one it has,
+        it will perform an update. This ensure that the LSP data will be frequently refreshed and only
+        the newer is kept (line 16). Moreover, in the $OnReceiveToken$, we see that if the system is down,
+        $token$ will be passed to all nodes and they will begin a new procedure of generating LSP and broadcasting
+        to all.
+        \item \textbf{Convergence} because in this general graph, with fair execution, once a node sends
+        a LSP, it will be propagated to all other nodes. With the constrain in the $SEQNO$, any stale LSP
+        will be replaced.
+    \end{itemize}
+\end{proof}
+
+\section*{Question 3: Comparison of Link-State Algorithms}
+
+\subsection*{Advantages}
+\begin{itemize}
+    \item \textbf{Original Link-State Algorithm:} It is efficient, scalable, and well-established, which has led to its wide use in production networks.
+    
+    \item \textbf{Self-Stabilizing Link-State Algorithm:} Its primary advantage is its inherent fault tolerance. The algorithm is self-stabilizing, meaning it can automatically recover from arbitrary transient faults without external intervention.
+\end{itemize}
+
+\subsection*{Disadvantages}
+\begin{itemize}
+    \item \textbf{Original Link-State Algorithm:} The main drawback is its lack of self-stabilization. It can be vulnerable to transient faults that corrupt routing tables, and it often requires significant manual configuration and careful management to operate reliably.
+    
+    \item \textbf{Self-Stabilizing Link-State Algorithm:} The robustness comes at a cost. These algorithms are typically more complex in their design and can be significantly harder to implement, verify, and debug compared to their non-stabilizing counterparts.
+\end{itemize}
+
 \end{document}
 % vim: set ts=4 sw=4 et:
+

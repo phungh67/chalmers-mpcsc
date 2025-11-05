@@ -1,0 +1,363 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{latexsym,amsfonts,amssymb,amsthm,amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor} 
+\usepackage{algorithm}
+\usepackage{algorithmic} % For the pseudocode block
+\usepackage{geometry}
+\usepackage{enumitem} % For custom list labels
+\usepackage[hidelinks]{hyperref} % For good-looking links
+
+\graphicspath{ {./images/} }
+
+% Using the geometry package for margins, as it's cleaner
+\geometry{a4paper, margin=1in}
+% Keeping your parindent style from safenet.tex
+\setlength{\parindent}{0in}
+
+\lstset{
+  mathescape,
+  backgroundcolor=\color{gray!10},  
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  breakatwhitespace=false,      
+  breaklines=true,                
+  captionpos=b,                    
+  commentstyle=\color{green}, 
+  extendedchars=true,              
+  frame=single,                   
+  keepspaces=true,             
+  keywordstyle=\color{blue},      
+  language=c++,                 
+  numbers=none,                
+  numbersep=5pt,                   
+  numberstyle=\tiny\color{blue}, 
+  rulecolor=\color{gray},        
+  showspaces=false,               
+  showstringspaces=false,
+  showtabs=false,                 
+  stepnumber=5,                  
+  stringstyle=\color{red},   
+  tabsize=3,                      
+  title=\lstname                
+}
+
+\title{SafeNet for Computer Network EDA387}
+\author{Huy Hoang Phung - huyhoang@chalmers.student.se}
+
+\begin{document}
+
+\maketitle
+
+\vspace{0.5in}
+
+\begin{algorithm}
+\caption{SNA for directed anonymous rings; code for processor $p_i$, where $M = n+1$}
+\label{alg:sna}
+\begin{algorithmic}[1]
+\STATE \textbf{upon a pulse begin}
+    \STATE let $lr \gets \text{read } r_{i-1 \mod n}$;
+    \STATE let $x \gets \min(r_i, lr)$;
+    \IF{$x \neq n$} \STATE $x \gets (x-1) \mod M$;
+    \ENDIF
+    \IF{$x = 0$} \STATE signal();
+    \ENDIF
+    \STATE write $x$ to $r_i$;
+\STATE \textbf{upon trigger() begin}
+    \IF{$r_i = M-1$} \STATE write $M-2$ to $r_i$;
+    \ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\section*{Question 2: Self-Stabilizing Simultaneous Activation (20 points)}
+
+We consider a synchronous anonymous computer network in which processors communicate through shared memory. In each global pulse, all processors perform one atomic step simultaneously: at the beginning of the step, every processor reads the registers of its directly connected neighbors, performs local computation, and finally writes to its own register. The processors have no globally unique identifiers and execute the same deterministic algorithm. The communication topology is modeled as a connected graph $G = (P, E)$, where each vertex corresponds to a processor and each edge represents a bidirectional communication channel.
+
+This question studies the problem of Simultaneous Network-wide Activation (SNA), in which all network processors must invoke signal() in the same synchronous round after one of them receives an earlier trigger() event. The goal of SNA is to design an algorithm satisfying the following properties (during their legal executions):
+\begin{itemize}
+    \item \textit{Simultaneity:} All processors invoke signal() in the same synchronous round.
+    \item \textit{No early signal:} No processor invokes signal() before the earliest possible common round.
+    \item \textit{Optimality:} The number of synchronous rounds until the activation round is asymptotically minimal with respect to the network size $n = |P|$, and the memory requirements are within $O(\Delta \log N)$, where $N$ is an upper bound on $n$ and $\Delta$ is an upper bound on the node degree in $G = (P, E)$.
+\end{itemize}
+
+\subsection*{Part I: Simultaneous Network-wide Activation (SNA) on a Directed Ring.}
+
+Algorithm 1 presents a solution for the case in which $G = (P, E)$ has the topology of a directed ring.
+
+\begin{enumerate}[label=\textbf{2.\alph*}, align=left, leftmargin=*, labelsep=5pt]
+    \item[(2.a (1 point))] Define the set of legal executions for the SNA problem.
+    \item[(2.b (1 point))] Define the set of safe configurations with respect to the SNA problem and Algorithm 1.
+    \item[(2.c (6 points))] Algorithm 1's Consider an execution $R$ of Algorithm 1 that starts from a configuration in which $\forall i \in P: r_i = n$, and is immediately followed by a step in which some processor $p_j$ invokes trigger(). Prove that the ensuing activation satisfies requirements R-1, R-2, and R-3. (Each requirement is 2 pt)
+\end{enumerate}
+
+\bigskip
+For the sake of simplicity of this question, there is no need to prove the convergence of Algorithm 1. From this point on in this question, please assume that Algorithm 1 is self-stabilizing and that its stabilization time is in $O(n)$.
+\bigskip
+
+\subsection*{Part II: Simultaneous Network-wide Activation (SNA) on a Non-Rooted Tree}
+
+In this part of the question, we study self-stabilizing solutions for SNA on non-rooted trees.
+
+\begin{enumerate}[label=\textbf{2.\alph*}, align=left, leftmargin=*, labelsep=5pt]
+    \item[(2.d (6 points))] \textbf{Reuse Algorithm.} Please design a solution to the SNA problem on non-rooted trees. You are welcome to reuse Algorithm 1 via a composition between the SNA for directed rings and an algorithm of your choice. The algorithm can be either from the Appendix or not. However, if the algorithm does not appear in the Appendix, please provide the complete pseudo-code and explain all the details needed to understand the composition.
+    
+    \paragraph*{Hint:} Where in the course have we designed algorithms for anonymous unrooted trees? What techniques were used there?
+
+    \item[(2.e (2 point))] Define the set of safe configurations with respect to your solution in item 2.d of this part.
+    \item[(2.f (6 points))] \textbf{Correctness ideas.} Describe the key ideas for proving that your solution is self-stabilizing. Specifically, explain why the composition is correct, and if you have used or proposed any algorithm that does not appear in the Appendix, you must also outline the key ideas for proving its correctness. (Composition correctness: 2 pt; correctness of the algorithms not appearing in the Appendix, or stating that an algorithm from the Appendix that you use is correct and under which assumptions: 4 pt in total for all algorithms.)
+\end{enumerate}
+
+\bigskip
+
+\begin{proof}
+
+    \textbf{Part I}
+    \begin{itemize}
+        \item \textbf{Set of legal execution} Any execution that statifies these following can be
+        considered as a legal execution:
+            \begin{itemize}
+                \item All nodes must hold the same value (equals to $n$, where $n$ is the total number
+                of nodes in this system).
+                \item At round $r_t$, one or more nodes receive a $trigger()$.
+                \item No early fire, all processors wait for others to invoke the $signal()$ in the same
+                round.
+                \item Signal round $r_s$ and trigger round $r_t$ must be different, and statifies the
+                condition that $r_s$ $>$ $r_t$
+            \end{itemize}
+        \item \textbf{Safe configuration} When all the processors hold the same value (and equals to $n$)
+            \begin{itemize}
+                \item With value $n$, the value of $x$ is not changing, hence the line 4-9 will be skipped.
+                \item Line 10 keeps the value of $r_i$ unchanging, hence, the system is safe.
+            \end{itemize}
+        \item \textbf{Prove}
+            \begin{itemize}
+                \item When $p_j$ is triggered, lines 12-14 will be actived, changing the value of $r_j$
+                \item Following this step, when a $pulse$ wakes another processor $k$, neighbor of $j$. 
+                Because $j$ has already changed its value, line 2-5 will be executed.
+                \item \textbf{R1} The $min$function will ensure each neighbor looks into their right node
+                in this ring and set the clock to "lower" value. Then subtracts 1 (for countdown), writes
+                new value in shared register (line 2-6 and line 10). A node only fires when line 7 is met.
+                With the characteristics of ring topology, the "trigger wave" will be spread to all other
+                nodes.
+                \item \textbf{R2} Because each node reads its directly connected neighbor first, the performs
+                computation, it guarantees that at most 1 node can change the value of register at the round
+                following $trigger()$ (the directed neighbor of node received trigger). Furthermore, the line
+                7 ensures only when $x = 0$, node can invoke $signal()$. Combining with $R1$, there is no
+                early firing in this system.
+                \item \textbf{R3} As stated, each time, there is only 1 additional node changes its "clock"
+                by performing line 2-6, and all these nodes will followed the "clock" of fastest node. 
+                Therefore, in $n$ round, the activation will take place.
+            \end{itemize}
+    \end{itemize}
+
+    \textbf{Part II}
+
+    \begin{itemize}
+        \item \textbf{Reusable} The problem can be solved by using a combination from the SNA algorithm ($AL1$)
+        and the Algorithm 20 ($AL20$) from the Appendix (Couting problem in the non-rooted anonymous tree).
+            \begin{itemize}
+                \item \textbf{Correctness} $AL20$ will give each node two information: one about the total number of
+                nodes in the system and for each node $p_j$, neighbor of $p_i$, information about how many nodes in the
+                subtree toward to $j$, excluding the branch contains $j$ itself.
+                \item \textbf{Idea} $AL1$ provides control mechanism for the synchronous firing, while $AL20$ is
+                responsible for advertising the path for "trigger" signal to propagate through the tree.
+            \end{itemize}
+    \end{itemize}
+
+    \begin{algorithm}[H]
+\caption{SNA for Non-Rooted Trees (General Graph); code for processor $p_i$}
+\label{alg:sna_tree}
+\begin{algorithmic}[1]
+\STATE \textbf{Variables:}
+\STATE $n \gets \text{(total nodes or processors in this tree)}$
+\STATE $M \gets n + 1$
+\STATE $r_i \gets n$ \COMMENT{SNA state register, initialized to the safe state}
+\STATE $N(i) \gets \text{Set of neighbors of } p_i$
+
+\STATE \textbf{upon trigger() begin}
+    \IF{$r_i = n$}
+        \STATE write $r_i \gets n-1$ \COMMENT{Start the countdown}
+    \ENDIF
+\STATE \textbf{end}
+
+\STATE \textbf{upon synchronous pulse begin}
+\STATE \textbf{do forever begin}
+    \STATE $min\_neighbor\_state \gets n$
+    \FORALL{$p_j \in N(i)$}
+        \STATE $l_j \gets \text{read}(r_j)$
+        \IF{$l_j < min\_neighbor\_state$}
+            \STATE $min\_neighbor\_state \gets l_j$
+        \ENDIF
+    \ENDFOR
+    \STATE $z \gets \min(r_i, min\_neighbor\_state)$
+    \IF{$z \neq n$}
+        \IF{$z = 0$}
+            \STATE signal()
+            \STATE write $r_i \gets n$ 
+        \ELSE
+            \STATE write $r_i \gets (z - 1) \mod M$
+        \ENDIF
+    \ELSE
+        \STATE write $r_i \gets n$
+    \ENDIF
+\STATE \textbf{end}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{itemize}
+    \item \textbf{Safe configuration} every node must hold two values, the first one is total number
+    of nodes in this system in register $count[i]$, the second one is the value $n$ in the register
+    $r_i$ for the firing. With this configuration, line 13-20 will repeatly write the same value $n$.
+    Then line 21 to 28 will be skipped.
+    \item \textbf{Correctness}
+        \begin{itemize}
+            \item \textbf{Counting tree} This has been proved before, from any chaostic state, the network
+            will be stabilized and all node will know how many nodes are there in this system.
+            \item \textbf{SNA} Has been proved to be correct and convergence is $O(n)$
+        \end{itemize}
+        
+        In the adapted algorithm, from line 13-19, a node $p_i$ only takes the faster neighbors $j$.
+        Moreover, it also enusre (line 20) this signal only propagated 1 hop per round. When the firing is done,
+        line 24 will reset the value to $n$, achieving safe configuration.
+    \item \textbf{R1} line 20 acts as a shortest path countdown spreading. When a node $p_j$ is triggered, its
+    $r_j$ is set to $n-1$, statifies line 21, allowing the signal to be propagated. $i$ node with distance $d_i$
+    will receive this signal after $d_i$ round because in line 20, each time, a node $j$ only perform computation
+    after reading, hence, the $trigger()$ must travel at most 1 hop each round. After receiving the signal, node 
+    $i$ will begin countdown from $n - d_i$. The total time for the firing will be $d_i + n - d_i = n$. This result
+    does not depend on how far from $i$ to $j$, so every nodes fire exact the same round (after $n$).
+    \item \textbf{R2} the $trigger()$ sets the counter for node $j$ from $n-1$, In line 26, $r_j$ only decreases 1 
+    by round. With the condition $R1$ above, no processor can fire before round $n$.
+    \item \textbf{R3} activation time is $n$ round, which is minimal with respect to the network size.
+\end{itemize}
+\end{proof}
+
+\section*{Question 3: Self-Stabilizing Leader Election (20 points)}
+
+Let $P = \{p_0, \dots, p_{N-1}\}$ be a finite set of processors, such that any processor can communicate directly with any other processor in the network. Each $p \in P$ has a globally unique identifier, (ID). It may also, without explicit notification, fail-and-stop (i.e. stop taking steps for a finite or infinite period of time) but can later resume execution. We say that a processor is non-faulty if it is currently up and connected. We say that the network is stable if there exists at least one processor that never fails (i.e. never performs a fail-stop) throughout the entire network execution.
+
+The Fault-Tolerant Leader Election (FTLE) problem requires that all non-faulty processors eventually agree on one processor, called the leader, such that the following requirements hold:
+
+\begin{itemize}
+    \item \textbf{Uniqueness:} Eventually, at most one processor is considered leader (even if the network is unstable).
+    \item \textbf{Agreement:} If the network is stable, all non-faulty processors quickly recognize the identifier of the same leader.
+    \item \textbf{Validity:} If the network is stable, the elected leader is the non-faulty processor that has been continuously operational for the longest time. (Ties are broken by selecting the processor with the highest identifier).
+    \item \textbf{Termination:} If the network is stable, every non-faulty processor quickly knows the leader's identity.
+\end{itemize}
+
+\begin{enumerate}[label=\textbf{3.\alph*}, align=left, leftmargin=*, labelsep=5pt]
+    \item[(3.a (1 point))] What is the model most suitable for solving the Fault-Tolerant Leader Election (FTLE) problem? Please choose from the models if you think there is more than one correct answer; select the one that can help you the most to simplify your answer to the rest of this question. Clearly justify your selection.
+    \begin{itemize}
+        \item An asynchronous shared-memory network with the topology of a fully connected graph.
+        \item Synchronous message-passing network with the topology of a general graph and reliable communication channels.
+        \item Synchronous message-passing network with the topology of a general graph and fair communication.
+        \item An asynchronous message-passing network with the topology of a general graph and fair communication.
+        \item Synchronous shared-memory network with the topology of a fully connected graph.
+    \end{itemize}
+    
+    \item[(3.b (1 point))] Define the set of legal executions for the Fault-Tolerant Leader Election (FTLE) problem.
+    
+    \item[(3.c (8 points))] Provide yourself a detailed pseudo-code for a self-stabilizing solution to the FTLE in this question. (you are allowed to use a single unbounded shared variable per processor (and showing the method for bounding this variable is not required for the sake of simplicity)).
+    Your pseudocode must be self-contained and specify: local state variables, message types (or shared variables), and event handlers (e.g., message arrivals, do-forever loops, upon pulses), and it must follow the model selected in item 3.a of this question. You may draw inspiration from Algorithm 16 in the Appendix, but your solution must be adapted to the FTLE specification (Uniqueness, Agreement, Validity, Termination) and stand on its own without cross-referencing the Appendix.
+    
+    \textbf{Hint:} Can an unbounded counter help to satisfy the Validity requirement regarding the longest continuous operation of the elected leader? As mentioned, for the sake of simplicity of this question, you may assume one unbounded counter per processor.
+    
+    \item[(3.d (3 points))] Define the set of safe configurations with respect to the FTLE problem and the algorithm you have proposed in item 3.c of this question.
+    
+    \item[(3.e (5 points))] Prove that, when the network execution starts in a safe configuration (from 3.d), the execution of the algorithm you have proposed in item 3.c satisfies the requirements of Uniqueness, Agreement, Validity, and Termination (1.25 pt per requirement).
+    
+    \item[(3.f (5 points))] Prove that, when the network execution starts in any configuration, the algorithm you have proposed in item 3.c eventually brings the network to a safe configuration. Note that providing the exact or asymptotic stabilization time is not required; a very long stabilization time is acceptable for your solution.
+    
+    \item[(3.g (1 point))] What are the communication costs of the algorithm you have proposed in item 3.c? Specify the message (or shared-variable) size: list all message types (or registers), their payload fields, and their asymptotic sizes (e.g., O(log N) bits for identifiers, where N is an upper bound on the number of processors $n$). Briefly justify your bounds.
+\end{enumerate}
+
+\begin{algorithm}[H]
+\caption{Self-Stabilizing FTLE Algorithm for processor $p_i$}
+\label{alg:ftle}
+\begin{algorithmic}[1]
+\STATE \textbf{Shared state in} $p_i$:
+\STATE $R_i.\text{epoch} \gets 0$
+\STATE $R_i.\text{leader} \gets ID(i)$ \COMMENT{Initially vote itself}
+\vspace{0.5em}
+
+\STATE \textbf{do forever begin}
+    \STATE $S \gets$ snapshot of all $R_j$ registers
+
+    \STATE $L\_id \gets ID(i)$; \quad $L\_epoch \gets S[i].\text{epoch}$
+
+    \FORALL{$p_j \in P$}
+        \IF{$S[j].\text{epoch} > L\_epoch$}
+            \STATE $L\_id \gets ID(j)$; \quad $L\_epoch \gets S[j].\text{epoch}$
+        \ELSIF{$S[j].\text{epoch} = L\_epoch$ \textbf{and} $ID(j) > L\_id$}
+            \STATE $L\_id \gets ID(j)$; \quad $L\_epoch \gets S[j].\text{epoch}$
+        \ENDIF
+    \ENDFOR
+
+    \IF{$L\_id = ID(i)$}
+        \STATE $R_i.\text{epoch} \gets R_i.\text{epoch} + 1$
+        \STATE $R_i.\text{leader} \gets ID(i)$
+    \ELSE
+        \STATE $R_i.\text{epoch} \gets 0$
+        \STATE $R_i.\text{leader} \gets L\_id$
+    \ENDIF
+\STATE \textbf{end}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{proof}
+
+    \textbf{Model choosing \& idea}
+    \begin{itemize}
+        \item \textbf{3.a Model} An asynchronous shared-memory network with the topology of a fully connected.
+        This model is suite for this problem because: \begin{itemize}
+            \item This problem states that processor can nap/fail then runs again, so rely on
+            asynchronous round is not suitable (because this system must run without notification
+            from failed ones).
+            \item Because the usage of unbounded register is allowed and in the $AL16$, node can read
+            its neighbor's register to update its value, shared memory is a suite model.
+            \item Fully connected allows nodes to agree on electing a leader.
+        \end{itemize}
+        \item \textbf{3.b Legal execution} \begin{itemize}
+            \item At any point of time, after $t$ successfully operated rounds, there is one and only
+            a processor $i$ acts as a leader for this sytem. This also happens if the network is unstable.
+            \item If the network is stable, all processors must have the same leader.
+            \item A leader is a processor that operated for the longest time and also has the highest ID.
+            \item Every processors must quickly learn the identity of the leader.
+        \end{itemize}
+        \item \textbf{3.c Proposed} $AL3$ above is the proposed solution for this problem. Each processor
+        maintains a register (unbounded) to store its operated time ($epoch$). It also writes this information
+        along with its "leader" ID to exchange with other processors in this system (register $R$).
+        \item \textbf{3.d Safe configuration} when there is only 1 processor (leader) keeps increasing its $epoch$, 
+        other processors continuously reset $epoch$ to 0 and also have the same value for $L\_id$.
+        \item \textbf{3.e Convergence in safe configuration} \begin{itemize}
+            \item \textbf{Uniqueness} line 7-13 enforces processor $i$ to give up leadership for any $j$ that
+            operated for a longer time (tie break with ID). 
+            \item \textbf{Agreement} line 16 and 19 ensure $i$ always writes the result in the shared register
+            $R$. And the $do forever$ allows processor to exchange these information with neighbors. Moreover,
+            this is a fully connected graph, this information will reach all processors.
+            \item \textbf{Validity} if network is stable, all processors can execute the computation and write
+            to shared register $R$, allowing all neighbors to read and agree in a common ledear.
+            \item \textbf{Termination} even if the network is unstable, line 17-19 ensures all processors should
+            overwrite all garbage value in the $epoch$, only running processor can elect itself.
+        \end{itemize}
+        \item \textbf{3.f Convergence in faulty condition} \begin{itemize}
+            \item \textbf{leader election} because all processors are running the same deterministic algorithm,
+            they will decide to pick the same processor to be the leader (line 7-13). The conditions are: the
+            longest operating with the highest ID.
+            \item \textbf{correction wave} when a leader is elected, every other processors will execute line 
+            17-20, flush all faulty value. Meanwhile, leader keeps increasing its $epoch$, ensure its leadership.
+            This is indicated from line 14 to 16.
+            
+            Even with an error that causes running processors to have multiple values of $epoch$, because ID is unique,
+            a leader will be picked, starting the reset to 0 of all other $epoch$.
+        \end{itemize}
+        \item \textbf{3.g Communication cost} for ID, it required O(log N) bit to represent N processors.
+        Register $L\_id$ also takes O(log N). The $epoch$ is unbounded, as stated in line 15, it keeps 
+        increasing if the leader runs forever. In conclusion, the cost for the register $R$(shared) is unbounded.
+    \end{itemize}
+\end{proof}
+
+\end{document}
+% vim: set ts=4 sw=4 et:
