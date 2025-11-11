@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.9.20)  5 NOV 2025 20:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.9.20)  11 NOV 2025 19:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -347,7 +347,24 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 {c:/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 
-[2] (./assignment.aux)
+[2]
+Underfull \hbox (badness 1400) in paragraph at lines 139--143
+[]\OT1/cmr/m/n/12 Rob Kuz-nia, Al-li-son Gor-don ,Ed La-van-dera.  You're not rush-ing. You're just
+ []
+
+
+Underfull \hbox (badness 1168) in paragraph at lines 139--143
+\OT1/cmr/m/n/12 ready: Par-ents say Chat-GPT en-cour-aged son to kill him-self  \OT1/cmr/m/it/12 CNN News \OT1/cmr/m/n/12 ac-
+ []
+
+
+Underfull \hbox (badness 2119) in paragraph at lines 139--143
+\OT1/cmr/m/n/12 cessed Novem-ber 2025.  Avail-able: []$\OT1/cmtt/m/n/12 https : / / edition . cnn . com / 2025 / 11 / 06 / us /
+ []
+
+
+
+[3] (./assignment.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-09-02>
@@ -356,18 +373,18 @@ Package rerunfilecheck Info: File `assignment.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 11639 strings out of 467797
- 174087 string characters out of 5435982
+ 11657 strings out of 467797
+ 174400 string characters out of 5435982
  779474 words of memory out of 5000000
- 40132 multiletter control sequences out of 15000+600000
- 635827 words of font info for 79 fonts, out of 8000000 for 9000
+ 40142 multiletter control sequences out of 15000+600000
+ 636433 words of font info for 81 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,6n,79p,589b,445s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,6n,79p,589b,567s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on assignment.pdf (2 pages, 64596 bytes).
+Output written on assignment.pdf (3 pages, 80728 bytes).
 PDF statistics:
- 52 PDF objects out of 1000 (max. 8388607)
- 37 compressed objects within 1 object stream
- 10 named destinations out of 1000 (max. 500000)
+ 81 PDF objects out of 1000 (max. 8388607)
+ 65 compressed objects within 1 object stream
+ 18 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
